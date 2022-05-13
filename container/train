@@ -6,6 +6,7 @@ import logging
 import time
 import pickle
 from tqdm import tqdm
+import json
 
 import torch
 from torch.utils.data import DataLoader
@@ -57,7 +58,7 @@ def init_args():
 
     # Other parameters
     parser.add_argument("--max_seq_length", default=128, type=int)
-    parser.add_argument("--n_gpu", default=0)
+    parser.add_argument("--n_gpu", default='0')
     parser.add_argument("--train_batch_size", default=16, type=int,
                         help="Batch size per GPU/CPU for training.")
     parser.add_argument("--eval_batch_size", default=16, type=int,
@@ -221,7 +222,7 @@ class T5FineTuner(pl.LightningModule):
         print ("self.hparams.n_gpu: ",self.hparams.n_gpu)
 
         t_total = (
-                (len(dataloader.dataset) // (self.hparams.train_batch_size * max(1, self.hparams.n_gpu)))
+                (len(dataloader.dataset) // (self.hparams.train_batch_size * max(1, len(self.hparams.n_gpu))))
                 // self.hparams.gradient_accumulation_steps
                 * float(self.hparams.num_train_epochs)
         )
@@ -321,9 +322,9 @@ if __name__ == '__main__':
     args.train_batch_size = int(env_hyper["train_batch_size"])
     args.learning_rate = float(env_hyper["learning_rate"])
     args.num_train_epochs = int(env_hyper["num_train_epochs"])
-    args.do_train = env_hyper["do_train"]
-    args.do_eval = env_hyper["do_eval"]
-    args.do_direct_eval = env_hyper["do_direct_eval"]
+    args.do_train = json.loads(env_hyper["do_train"].lowevr())
+    args.do_eval = json.loads(env_hyper["do_eval"].lowevr())
+    args.do_direct_eval = json.loads(env_hyper["do_direct_eval"].lowevr())
        
     print ("args task: ",args.task)
     print ("env task: ", env_hyper['task'])
