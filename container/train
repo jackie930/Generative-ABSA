@@ -322,9 +322,9 @@ if __name__ == '__main__':
     args.train_batch_size = int(env_hyper["train_batch_size"])
     args.learning_rate = float(env_hyper["learning_rate"])
     args.num_train_epochs = int(env_hyper["num_train_epochs"])
-    args.do_train = json.loads(env_hyper["do_train"].lowevr())
-    args.do_eval = json.loads(env_hyper["do_eval"].lowevr())
-    args.do_direct_eval = json.loads(env_hyper["do_direct_eval"].lowevr())
+    args.do_train = json.loads(env_hyper["do_train"].lower())
+    args.do_eval = json.loads(env_hyper["do_eval"].lower())
+    args.do_direct_eval = json.loads(env_hyper["do_direct_eval"].lower())
        
     print ("args task: ",args.task)
     print ("env task: ", env_hyper['task'])
