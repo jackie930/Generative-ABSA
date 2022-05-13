@@ -20,9 +20,6 @@ from transformers import (
 )
 warnings.filterwarnings("ignore",category=FutureWarning)
 
-from transformers import BertTokenizer
-from modeling_cpt import CPTModel, CPTForConditionalGeneration
-
 import sys
 try:
     reload(sys)
@@ -79,20 +76,6 @@ def absa_infer(data):
     print("prediction result: ",dec)
     t2 = datetime.datetime.now()
     return dec ,str(t2 - t1)
-
-
-def cpt_infer(text):
-    t1 = datetime.datetime.now()
-    
-    inputs = tokenizer(text, return_tensors="pt",max_length=512)
-    outputs = model.generate(inputs['input_ids'], max_length=64, top_p=0.95)
-    generated = tokenizer.decode(outputs[0])
-
-    print("prediction result: ",generated)
-    
-    t2 = datetime.datetime.now()
-    print("<<<<done")
-    return generated, str(t2 - t1)
 
 
 @app.route('/ping', methods=['GET'])
