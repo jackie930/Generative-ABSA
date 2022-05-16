@@ -37,20 +37,24 @@ s3_client = boto3.client('s3')
 
 print ("loading pretrained models!")
 # Set up model
-# model = CPTForConditionalGeneration.from_pretrained("6")
-# tokenizer = BertTokenizer.from_pretrained('6')
-#model.eval()  # Set in evaluation mode
-
-# tokenizer = AutoTokenizer.from_pretrained('pegasus')
-# model = AutoModelForSeq2SeqLM.from_pretrained('pegasus')
 n_gpu=0
 max_seq_length=512
 device = torch.device(f'cuda:{n_gpu}')
-checkpoint = './model/cktepoch=15_v1.ckpt'
+
+saved_model_dir = 'opt/ml/model'
+all_checkpoints = []
+for f in os.listdir(saved_model_dir):
+    file_name = os.path.join(saved_model_dir, f)
+    if 'cktepoch' in file_name:
+        all_checkpoints.append(file_name)
+print ("all checkpoints: ", all_checkpoints)
+
+checkpoint = os.path.join(saved_model_dir,all_checkpoints[-1])
+
 model_ckpt = torch.load(checkpoint, map_location=device)
 model = T5FineTuner(model_ckpt['hyper_parameters'])
 model.load_state_dict(model_ckpt['state_dict'])
-tokenizer = T5Tokenizer.from_pretrained('lemon234071/t5-base-Chinese',mirror='tuna')
+tokenizer = T5Tokenizer.from_pretrained('t5-base')
 
 model.model.to(device)
 model.model.eval()

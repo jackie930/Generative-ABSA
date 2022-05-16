@@ -18,7 +18,7 @@ from transformers import get_linear_schedule_with_warmup
 
 from data_utils import ABSADataset
 from data_utils import write_results_to_log, read_line_examples_from_file
-from eval_utils import compute_scores,compute_scores_jj
+from eval_utils import compute_scores
 from sagemaker_training import entry_point, environment, mapping
 
 
@@ -93,7 +93,8 @@ def init_args():
 
     #change output file path
     # output_dir = f"{task_dataset_dir}/{args.paradigm}"
-    output_dir = os.path.join("/opt/ml/output",f"{args.paradigm}")
+    #output_dir = os.path.join("/opt/ml/output",f"{args.paradigm}")
+    output_dir = "/opt/ml/model"
     if not os.path.exists(output_dir):
         os.mkdir(output_dir)
     args.output_dir = output_dir
@@ -368,7 +369,17 @@ if __name__ == '__main__':
         trainer.fit(model)
 
         # save the final model
-        # model.model.save_pretrained(args.output_dir)
+        # retrieve all the saved checkpoints for model selection
+        saved_model_dir = args.output_dir
+        print ("save output model path: ", saved_model_dir)
+        all_checkpoints = []
+        for f in os.listdir(saved_model_dir):
+            file_name = os.path.join(saved_model_dir, f)
+            if 'cktepoch' in file_name:
+                all_checkpoints.append(file_name)
+        print ("all checkpoints: ", all_checkpoints)
+
+        model.model.save_pretrained(args.output_dir)
 
         print("Finish training and saving the model!")
 
